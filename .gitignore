@@ -6,4 +6,6 @@ __pycache__/
 .pytest_cache/
 .ruff_cache/
 jev_convert/kb/extract/node_modules/
+frontend/node_modules/
+frontend/dist/
 .DS_Store

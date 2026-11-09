@@ -37,6 +37,29 @@ main { display: flex; gap: 14px; align-items: flex-start; flex-wrap: wrap; }
 .panel.wide { margin-top: 14px; flex: 1 1 100%; }
 .panel h2 { margin: 0 0 10px; font-size: 15px; }
 .panel h3 { margin: 12px 0 6px; font-size: 13px; color: var(--muted); }
+.deps-title { margin-top: 18px; }
+
+/* 执行流程图：节点卡片 + 箭头 */
+.pipeline { display: flex; align-items: stretch; gap: 8px; flex-wrap: wrap; }
+.pnode {
+  flex: 1 1 170px; max-width: 240px; padding: 10px 12px;
+  border: 1px solid var(--border); border-radius: 10px; background: #fafbfc;
+}
+.pnode .ptitle { font-weight: 600; font-size: 13px; }
+.pnode .psub { margin-top: 4px; font-size: 12px; color: var(--muted); word-break: break-all; }
+.pnode.ready { border-color: #bfe3cb; background: var(--ok-bg); }
+.pnode.ready .ptitle { color: var(--ok-fg); }
+.pnode.blocked { border-color: #f3c6c6; background: var(--bad-bg); }
+.pnode.blocked .ptitle { color: var(--bad-fg); }
+.pnode.pending { border-color: #f0dcc0; background: var(--draft-bg); }
+.pnode.pending .ptitle { color: var(--draft-fg); }
+.pnode.missing { border-color: #f0dcc0; background: var(--draft-bg); }
+.pnode.missing .ptitle { color: var(--draft-fg); }
+.pnode.external { border-style: dashed; opacity: 0.85; }
+.parrow { align-self: center; color: #c3c9d2; font-size: 15px; }
+
+.deps td:first-child { width: 240px; font-weight: 500; }
+.deps td:nth-child(2) { width: 150px; }
 .op:first-of-type h3 { margin-top: 0; }
 
 input[type="text"], select {

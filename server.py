@@ -9,6 +9,7 @@ from __future__ import annotations
 import argparse
 import io
 import json
+import os
 import threading
 import time
 from contextlib import redirect_stderr, redirect_stdout
@@ -21,7 +22,10 @@ from jev_convert.cli import _project_path, load_environment  # noqa: I001 - 与�
 from jev_convert.config import ConfigError, load_config
 
 ROOT = Path(__file__).resolve().parent
-FRONTEND = ROOT / "frontend"
+FRONTEND = ROOT / "frontend" / "dist"     # React 构建产物（npm run build）；开发模式用 vite dev + /api 代理
+
+_BUILD_HINT = ("前端尚未构建：cd frontend && npm install && npm run build；"
+               "开发模式可用 npm run dev（/api 自动代理到本服务）")
 
 _TASKS: dict[str, dict[str, object]] = {}
 _TASK_SEQ = 0
@@ -33,6 +37,68 @@ def _data_dir() -> Path:
     load_environment()
     config = load_config()
     return _project_path(config.paths.data_dir)
+
+
+def deps() -> dict[str, object]:
+    """前置依赖清单：执行（kb build / compile / confirm）之前必须就绪的内容。"""
+    import shutil
+
+    load_environment()
+    try:
+        config = load_config()
+        config_error = ""
+    except ConfigError as error:
+        config = None
+        config_error = str(error)
+    items: list[dict[str, object]] = [{
+        "id": "config", "label": "qa.toml 配置文件",
+        "ready": config is not None,
+        "hint": config_error or "已加载",
+    }]
+    if config is None:
+        for label in ("webui 源码目录", "Node 可执行文件", "kb/extract 依赖（npm install）",
+                      "编译期 LLM key", "知识库已构建", "lark-cli 可用", "确认表配置"):
+            items.append({"id": "pending", "label": label, "ready": None,
+                          "hint": "先修好 qa.toml 再检查"})
+        return {"items": items}
+
+    extract_dir = ROOT / "jev_convert" / "kb" / "extract"
+    webui = Path(config.webui.source_dir).expanduser()
+    kb_dir = _project_path(config.paths.data_dir) / "kb"
+    kb_version = None
+    try:
+        kb_version = jsonio.load(kb_dir / "navgraph.json").get("kb_version")
+    except (OSError, ValueError):
+        pass
+    llm_env = config.compile_llm.api_key_env
+    table = config.lark.confirm_base_token and config.lark.confirm_table_id
+    items += [
+        {"id": "webui", "label": "webui 源码目录",
+         "ready": webui.is_dir(),
+         "hint": str(webui) if webui.is_dir() else f"目录不存在：{webui}（kb build 抽取知识库用）"},
+        {"id": "node", "label": "Node 可执行文件",
+         "ready": shutil.which("node") is not None,
+         "hint": "已安装" if shutil.which("node") else "PATH 里找不到 node（kb build 用）"},
+        {"id": "node_modules", "label": "kb/extract 依赖（npm install）",
+         "ready": (extract_dir / "node_modules").is_dir(),
+         "hint": "已安装" if (extract_dir / "node_modules").is_dir()
+                 else "先执行 npm install --prefix jev_convert/kb/extract"},
+        {"id": "llm", "label": f"编译期 LLM key（{llm_env}）",
+         "ready": bool(os.environ.get(llm_env, "")),
+         "hint": "已设置" if os.environ.get(llm_env, "") else "写入 .env 后重启服务生效"},
+        {"id": "kb", "label": "知识库已构建",
+         "ready": kb_version is not None,
+         "hint": f"kb_version={kb_version}" if kb_version else "qa_data/kb/navgraph.json 不存在：先运行 kb build"},
+        {"id": "lark", "label": "lark-cli 可用",
+         "ready": shutil.which(config.lark.cli) is not None,
+         "hint": "已安装" if shutil.which(config.lark.cli)
+                 else f"PATH 里找不到 {config.lark.cli}（读导图、读写确认表用）"},
+        {"id": "table", "label": "确认表配置",
+         "ready": bool(table), "optional": True,
+         "hint": "已配置" if table
+                 else "可选：[lark].confirm_base_token / confirm_table_id 未配置时导出与读回会跳过"},
+    ]
+    return {"items": items}
 
 
 def overview() -> dict[str, object]:
@@ -138,7 +204,8 @@ class Handler(BaseHTTPRequestHandler):
     def _static(self, name: str, content_type: str) -> None:
         path = FRONTEND / name
         if not path.is_file():
-            self._send(404, b"not found", "text/plain; charset=utf-8")
+            body = _BUILD_HINT.encode("utf-8")
+            self._send(503, body, "text/plain; charset=utf-8")
             return
         self._send(200, path.read_bytes(), content_type)
 
@@ -159,12 +226,20 @@ class Handler(BaseHTTPRequestHandler):
         route = parts.path
         if route == "/":
             self._static("index.html", "text/html; charset=utf-8")
-        elif route == "/app.js":
-            self._static("app.js", "text/javascript; charset=utf-8")
-        elif route == "/style.css":
-            self._static("style.css", "text/css; charset=utf-8")
+        elif route.startswith("/assets/"):
+            name = route[len("/assets/"):]
+            if not name or "/" in name or ".." in name:
+                self._send(404, b"not found", "text/plain; charset=utf-8")
+                return
+            content_type = ("text/javascript; charset=utf-8" if name.endswith(".js")
+                            else "text/css; charset=utf-8" if name.endswith(".css")
+                            else "image/svg+xml" if name.endswith(".svg")
+                            else "application/octet-stream")
+            self._static(f"assets/{name}", content_type)
         elif route == "/api/overview":
             self._json(overview())
+        elif route == "/api/deps":
+            self._json(deps())
         elif route == "/api/plans":
             token = (query.get("token") or [""])[0]
             if not token:

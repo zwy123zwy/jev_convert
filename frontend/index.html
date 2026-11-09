@@ -1,91 +1,12 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>jev-convert · 测试用例转化</title>
-  <link rel="stylesheet" href="/style.css">
-</head>
-<body>
-  <header>
-    <h1>jev-convert</h1>
-    <p>测试用例转化：导图 → 编译（S0–S6）→ 计划库 → 人工确认</p>
-  </header>
-
-  <section id="overview" class="cards">
-    <div class="card"><div class="label">知识库版本</div><div class="value" id="ov-kb">—</div></div>
-    <div class="card"><div class="label">计划库</div><div class="value" id="ov-plans">—</div></div>
-    <div class="card"><div class="label">LLM 缓存</div><div class="value" id="ov-cache">—</div></div>
-    <div class="card"><div class="label">最近编译命中率</div><div class="value" id="ov-hit">—</div></div>
-  </section>
-
-  <main>
-    <section class="panel">
-      <h2>操作</h2>
-
-      <form id="form-compile" class="op">
-        <h3>1 · 编译导图</h3>
-        <input type="text" id="compile-url" placeholder="飞书思维导图链接" required>
-        <label class="inline">编译到
-          <select id="compile-until">
-            <option value="s0">s0 读取</option>
-            <option value="s1">s1 识别</option>
-            <option value="s2">s2 规范化</option>
-            <option value="s3">s3 落地</option>
-            <option value="s4">s4 路线</option>
-            <option value="s5">s5 断言</option>
-            <option value="s6" selected>s6 校验（完整）</option>
-          </select>
-        </label>
-        <button type="submit">开始编译</button>
-      </form>
-
-      <form id="form-confirm" class="op">
-        <h3>2 · 读回确认表</h3>
-        <input type="text" id="confirm-url" placeholder="同一个导图链接" required>
-        <p class="hint">人在多维表格里填完结论后，点这里更新计划、沉淀别名并回写。</p>
-        <button type="submit">读回确认表</button>
-      </form>
-
-      <form id="form-kb" class="op">
-        <h3>3 · 构建知识库</h3>
-        <input type="text" id="kb-webui" placeholder="webui 源码目录（留空用 qa.toml 的 [webui].source_dir）">
-        <p class="hint">需要 node 在 PATH 中；首次使用先在 jev_convert/kb/extract 下 npm install。</p>
-        <button type="submit">构建 / 重建知识库</button>
-      </form>
-    </section>
-
-    <section class="panel grow">
-      <h2>任务日志</h2>
-      <div id="flow" class="flow hidden"></div>
-      <div id="task-list" class="task-tabs"></div>
-      <pre id="task-log" class="log">（还没有任务）</pre>
-    </section>
-  </main>
-
-  <section class="panel wide">
-    <h2>计划库</h2>
-    <div class="row">
-      <select id="plan-token"><option value="">（计划库为空）</option></select>
-      <span id="plan-summary" class="hint"></span>
-    </div>
-    <table id="plan-table" class="grid">
-      <thead><tr><th>用例 ID</th><th>状态</th><th>导图节点</th><th>知识库</th></tr></thead>
-      <tbody></tbody>
-    </table>
-
-    <div id="plan-detail" class="detail hidden">
-      <h3 id="detail-title"></h3>
-      <div id="detail-meta" class="hint"></div>
-      <table class="grid">
-        <thead><tr><th>#</th><th>类型</th><th>页面</th><th>目标</th><th>置信度</th><th>断言</th></tr></thead>
-        <tbody id="detail-steps"></tbody>
-      </table>
-    </div>
-  </section>
-
-  <footer>只监听本机。编译产物写在 qa_data/plans/（入 git 可评审），知识库在 qa_data/kb/。</footer>
-
-  <script src="/app.js"></script>
-</body>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>jev-convert · 测试用例转化</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
 </html>
