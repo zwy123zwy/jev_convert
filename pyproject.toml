@@ -1,0 +1,25 @@
+[project]
+name = "jev-convert"
+version = "0.1.0"
+description = "把飞书测试用例思维导图编译成可执行、可人工确认的测试计划（jev-qa 的用例转化 agent 独立版）"
+requires-python = ">=3.12"
+dependencies = ["httpx==0.28.1"]
+
+[project.scripts]
+jev-convert = "jev_convert.cli:main"
+
+[dependency-groups]
+dev = ["pytest>=8.4,<9", "ruff>=0.14,<1"]
+
+[tool.ruff]
+line-length = 120
+
+[tool.ruff.lint]
+select = ["E", "F", "I"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"

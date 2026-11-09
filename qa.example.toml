@@ -1,0 +1,65 @@
+# jev-convert 配置模板。复制为 qa.toml 后填写。密钥不写在这里，写在 .env。
+
+[jev]                                   # 决策模型（转化结果里记录其模型名；本项目的编译链路不调用它）
+base_url = "http://<jev-endpoint-host>:9000/v1"
+model = "d3-flash"
+api_key_env = "TYPESAFE_API_KEY"
+
+[text_model]                            # 预留：新执行层的输入值来自计划（target.value），运行期不调用文本模型
+base_url = "https://api.deepseek.com/v1"
+model = "deepseek-chat"
+reasoning = ""                               # OpenRouter 填 "none"
+api_key_env = "TEXT_MODEL_API_KEY"
+
+[compile_llm]                           # 编译期 LLM：写法画像、候选选择、semantic 断言
+base_url = "https://api.deepseek.com/v1"
+model = "deepseek-chat"
+api_key_env = "TEXT_MODEL_API_KEY"           # 可以共用一个 key
+temperature = 0
+timeout_s = 60
+prompt_version = "v1"                        # 改提示词时递增，会让 LLM 缓存失效
+
+[lark]
+cli = "lark-cli"
+identity = "user"
+confirm_base_token = ""                 # 【需用户确认】用例确认用的多维表格
+confirm_table_id = ""
+report_folder_token = ""                # 预留（报告发布属于执行侧项目 jev-qa）
+
+[webui]
+source_dir = "~/Desktop/quanta_test/quanta/webui"   # 只读；kb build 用
+modules_file = "src/config/v2Modules.ts"     # 内部版菜单；SaaS 版是 v2ModulesSaaS.ts
+modules_export = "V2_MODULES"
+
+[target]                                # 被测环境（转化时只用于拼入口 url 的 host）
+base_url = "http://localhost"           # 【需用户确认】测试环境地址
+allowed_hosts = ["localhost", "127.0.0.1"]
+login_path = "/internal-login"
+default_account = "default"
+
+[accounts.default]                      # 【需用户确认】登录字段（计划里只写 ${account.*} 引用）
+login = "phone"
+phone_env = "QA_ACCOUNT_DEFAULT_PHONE"
+password_env = "QA_ACCOUNT_DEFAULT_PASSWORD"
+
+[test_data]                             # 【需用户确认】固定测试数据，计划里用 ${data.xxx} 引用
+graph_definition_id = "4"
+node_id = "supplier_sampling"
+
+[budget]
+nav_hop_actions = 5
+nav_replans = 2
+step_actions_default = 15
+step_actions = { click = 5, select = 5, type = 5 }
+case_minutes = 10
+env_repairs_per_case = 2
+
+[thresholds]
+profile_fit = 0.7                       # 写法画像低于此值时请用户标注样例（导出到确认表）
+auto_confirm = 0.9                      # 落地置信度达到此值才自动 confirmed
+arrive_wait_s = 5
+flaky_runs = 3
+
+[paths]                                 # 相对于项目根目录
+data_dir = "qa_data"
+runs_dir = "qa_runs"

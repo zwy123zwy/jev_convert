@@ -1,0 +1,58 @@
+{
+  "token": "mnExtraFeature",
+  "version": "1792028799",
+  "title": "标注工作台用例（多一层功能点，没有前置）",
+  "nodes": [
+    {
+      "node_id": "n_1",
+      "parent_id": null,
+      "text": "数据平台-新版",
+      "children": [
+        {
+          "node_id": "n_2",
+          "text": "工作台",
+          "children": [
+            {
+              "node_id": "n_3",
+              "text": "标注工作台",
+              "children": [
+                {
+                  "node_id": "n_4",
+                  "text": "任务处理",
+                  "children": [
+                    {
+                      "node_id": "n_10",
+                      "text": "处理一条任务",
+                      "children": [
+                        {
+                          "node_id": "n_12",
+                          "text": "进入任务池，点击「开始处理」",
+                          "children": [
+                            {
+                              "node_id": "n_13",
+                              "text": "预期：打开任务详情页"
+                            }
+                          ]
+                        },
+                        {
+                          "node_id": "n_14",
+                          "text": "点击「提交」",
+                          "children": [
+                            {
+                              "node_id": "n_15",
+                              "text": "预期：提示提交成功"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

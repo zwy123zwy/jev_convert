@@ -1,0 +1,76 @@
+{
+  "files": [
+    {
+      "file": "src/views/demo/Page.vue",
+      "buttons": [
+        {
+          "text": "开始处理"
+        },
+        {
+          "text": "批量退回"
+        },
+        {
+          "text": {
+            "dynamic": "<el-button type=\"text\">{{ buttonText }}</el-button>"
+          }
+        },
+        {
+          "text": "取消"
+        },
+        {
+          "text": "确定"
+        }
+      ],
+      "tabs": [
+        {
+          "label": "待处理"
+        },
+        {
+          "label": {
+            "dynamic": "dynamicTabLabel"
+          }
+        }
+      ],
+      "form_items": [
+        {
+          "label": "处理任务ID"
+        },
+        {
+          "label": {
+            "dynamic": "collectorLabel"
+          }
+        }
+      ],
+      "table_columns": [
+        {
+          "label": "任务ID"
+        },
+        {
+          "label": {
+            "dynamic": "columnLabel"
+          }
+        }
+      ],
+      "dialogs": [
+        {
+          "title": "确认退回"
+        }
+      ],
+      "messages": [
+        {
+          "type": "warning",
+          "text": "请先选择流程"
+        },
+        {
+          "type": "success",
+          "text": "开始处理成功"
+        }
+      ],
+      "query_keys": [
+        "flow",
+        "graph_definition_id",
+        "node_id"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,208 @@
+{
+  "routes_file": "src/router/routes.ts",
+  "modules_file": "src/config/v2Modules.ts",
+  "modules_export": "V2_MODULES",
+  "routes": [
+    {
+      "path": "/login",
+      "full_path": "/login",
+      "name": null,
+      "meta": {},
+      "redirect": "/internal-login",
+      "component": null,
+      "props": null,
+      "depth": 0,
+      "children": []
+    },
+    {
+      "path": "/internal-login",
+      "full_path": "/internal-login",
+      "name": "InternalLogin",
+      "meta": {
+        "title": "内部登录"
+      },
+      "redirect": null,
+      "component": "src/views/login/internalLogin.vue",
+      "props": null,
+      "depth": 0,
+      "children": []
+    },
+    {
+      "path": "/new/data-platform",
+      "full_path": "/new/data-platform",
+      "name": "DataPlatformNew",
+      "meta": {
+        "title": "数据平台-新版",
+        "icon": "Check",
+        "backendKey": "data_platform_new"
+      },
+      "redirect": "/new/data-platform/task/process",
+      "component": "src/views/dataPlatformNew/index.vue",
+      "props": null,
+      "depth": 0,
+      "children": [
+        {
+          "path": "task",
+          "full_path": "/new/data-platform/task",
+          "name": "DataPlatformNewTask",
+          "meta": {
+            "title": "任务管理",
+            "backendKey": "data_platform_new_task_management"
+          },
+          "redirect": "/new/data-platform/task/process",
+          "component": "src/views/dataPlatformNew/task/index.vue",
+          "props": null,
+          "depth": 1,
+          "children": [
+            {
+              "path": "process",
+              "full_path": "/new/data-platform/task/process",
+              "name": "DataPlatformNewProcessTask",
+              "meta": {
+                "title": "处理任务",
+                "backendKey": "data_platform_new_process_task"
+              },
+              "redirect": null,
+              "component": "src/views/dataPlatformNew/task/ProcessTask.vue",
+              "props": null,
+              "depth": 2,
+              "children": []
+            }
+          ]
+        },
+        {
+          "path": "workbench",
+          "full_path": "/new/data-platform/workbench",
+          "name": "DataPlatformNewWorkbench",
+          "meta": {
+            "title": "工作台",
+            "backendKey": "data_platform_new_workbench"
+          },
+          "redirect": "/new/data-platform/workbench/annotation",
+          "component": "src/views/dataPlatformNew/workbench/index.vue",
+          "props": null,
+          "depth": 1,
+          "children": [
+            {
+              "path": "annotation",
+              "full_path": "/new/data-platform/workbench/annotation",
+              "name": "DataPlatformNewAnnotationWorkbench",
+              "meta": {
+                "title": "标注工作台",
+                "backendKey": "data_platform_new_annotation_workbench"
+              },
+              "redirect": null,
+              "component": "src/views/dataPlatformNew/workbench/AnnotationWorkbench.vue",
+              "props": null,
+              "depth": 2,
+              "children": []
+            },
+            {
+              "path": "annotation/task-pool-filter",
+              "full_path": "/new/data-platform/workbench/annotation/task-pool-filter",
+              "name": "DataPlatformNewAnnotationTaskPoolFilter",
+              "meta": {
+                "title": {
+                  "dynamic": "POOL_TITLE"
+                },
+                "hidden": true,
+                "activeMenu": "/new/data-platform/workbench/annotation",
+                "backendKey": "data_platform_new_annotation_workbench"
+              },
+              "redirect": null,
+              "component": "src/views/demo/Page.vue",
+              "props": null,
+              "depth": 2,
+              "children": []
+            }
+          ]
+        },
+        {
+          "path": "batch",
+          "full_path": "/new/data-platform/batch",
+          "name": "DataPlatformNewBatchList",
+          "meta": {
+            "title": "批次列表",
+            "backendKey": "data_platform_new_batch_list"
+          },
+          "redirect": null,
+          "component": "src/views/dataPlatformNew/batch/BatchList.vue",
+          "props": null,
+          "depth": 1,
+          "children": []
+        }
+      ]
+    },
+    {
+      "path": "/403",
+      "full_path": "/403",
+      "name": "403",
+      "meta": {
+        "title": "权限不足"
+      },
+      "redirect": null,
+      "component": "src/views/error/403.vue",
+      "props": null,
+      "depth": 0,
+      "children": []
+    }
+  ],
+  "modules": [
+    {
+      "key": "data-platform-new",
+      "name": "数据平台-新版",
+      "icon": "Check",
+      "home_backend_key": "data_platform_new_process_task",
+      "entries": [
+        {
+          "kind": "container",
+          "key": "c_data_platform_new_task",
+          "title": null,
+          "name": null,
+          "from_backend_key": "data_platform_new_task_management",
+          "icon": "Management",
+          "leaves": [
+            {
+              "backend_key": "data_platform_new_process_task",
+              "title": null
+            }
+          ]
+        },
+        {
+          "kind": "container",
+          "key": "c_data_platform_new_workbench",
+          "title": "工作台",
+          "name": null,
+          "from_backend_key": null,
+          "icon": "Workbench",
+          "leaves": [
+            {
+              "backend_key": "data_platform_new_annotation_workbench",
+              "title": "标注工作台"
+            }
+          ]
+        },
+        {
+          "kind": "leaf",
+          "backend_key": "data_platform_new_batch_list",
+          "title": "批次列表"
+        }
+      ]
+    },
+    {
+      "key": "saas",
+      "name": {
+        "dynamic": "SAAS_MODULE_NAME"
+      },
+      "icon": "Setting",
+      "home_backend_key": null,
+      "entries": [
+        {
+          "kind": "leaf",
+          "backend_key": "data_platform_new_task_management",
+          "title": "任务管理"
+        }
+      ]
+    }
+  ]
+}
