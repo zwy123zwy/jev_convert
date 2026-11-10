@@ -36,7 +36,6 @@ from jev_convert.compile import library, s6_check
 from jev_convert.compile.plan import Plan, Step
 from jev_convert.compile.s3_ground import phrases
 from jev_convert.kb.cards import PageCard
-from jev_convert.kb.load import CONFIRMED_FILE
 from jev_convert.kb.navgraph import NavGraph
 from jev_convert.lark import Lark
 
@@ -258,19 +257,13 @@ def apply(rows: Sequence[Mapping[str, Any]], plans: Mapping[str, Plan], graph: N
 
 
 def record_knowledge(kb_dir: Path, aliases: Sequence[tuple[str, str, str]]) -> dict[str, Any]:
-    """把确认过的说法 → 元素写进 confirmed.json（累加 verified 次数）。返回写出的内容。"""
-    path = Path(kb_dir) / CONFIRMED_FILE
-    data: dict[str, Any] = jsonio.load(path) if path.exists() else {"version": 1, "pages": {}}
-    pages = data.setdefault("pages", {})
-    for page, phrase, name in aliases:
-        entry = pages.setdefault(page, {"aliases": {}, "verified": {}})
-        entry.setdefault("aliases", {})[phrase] = name
-        verified = entry.setdefault("verified", {})
-        verified[name] = int(verified.get(name, 0)) + 1
-    data["pages"] = {node: pages[node] for node in sorted(pages)}
-    if aliases:
-        jsonio.dump(data, path)
-    return data
+    """把确认过的说法 → 元素写进 confirmed.json（累加 verified 次数）。返回写出的内容。
+
+    写入走 jevkb：持 kb_dir/.lock 跨进程锁、键排序原子写；confirmed.json 损坏时抛 KbLoadError，不覆盖。
+    """
+    from jevkb.record import record_aliases
+
+    return record_aliases(Path(kb_dir), list(aliases))
 
 
 def describe_fields() -> str:

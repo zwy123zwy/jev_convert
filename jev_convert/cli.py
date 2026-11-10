@@ -131,9 +131,12 @@ def _compile(url: str, until: str) -> int:
     except AuthRequired as error:
         print(f"需要飞书授权：{error}\n授权链接：{error.url}", file=sys.stderr)
         return 1
-    except (LarkError, KbLoadError) as error:
+    except LarkError as error:
         print(f"编译失败：{error}", file=sys.stderr)
         return 1
+    except KbLoadError as error:
+        print(f"编译失败，知识库读不了：{error}", file=sys.stderr)
+        return 2
 
     _print_result(result)
     if result.plans:
@@ -273,6 +276,9 @@ def _confirm(url: str, *, lark=None) -> int:
     except LarkError as error:
         print(f"确认表读取失败：{error}", file=sys.stderr)
         return 1
+    except KbLoadError as error:
+        print(f"别名沉淀失败：{error}", file=sys.stderr)
+        return 2
     _emit("✓ 沉淀与回写")
 
     applied = collected.applied

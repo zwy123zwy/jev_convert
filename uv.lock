@@ -94,6 +94,7 @@ version = "0.1.0"
 source = { editable = "." }
 dependencies = [
     { name = "httpx" },
+    { name = "jev-kb" },
 ]
 
 [package.dev-dependencies]
@@ -103,13 +104,25 @@ dev = [
 ]
 
 [package.metadata]
-requires-dist = [{ name = "httpx", specifier = "==0.28.1" }]
+requires-dist = [
+    { name = "httpx", specifier = "==0.28.1" },
+    { name = "jev-kb", editable = "../jev-kb" },
+]
 
 [package.metadata.requires-dev]
 dev = [
     { name = "pytest", specifier = ">=8.4,<9" },
     { name = "ruff", specifier = ">=0.14,<1" },
 ]
+
+[[package]]
+name = "jev-kb"
+version = "0.1.0"
+source = { editable = "../jev-kb" }
+
+[package.metadata]
+requires-dist = [{ name = "pytest", marker = "extra == 'test'", specifier = ">=8" }]
+provides-extras = ["test"]
 
 [[package]]
 name = "packaging"

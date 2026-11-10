@@ -3,10 +3,14 @@ name = "jev-convert"
 version = "0.1.0"
 description = "把飞书测试用例思维导图编译成可执行、可人工确认的测试计划（jev-qa 的用例转化 agent 独立版）"
 requires-python = ">=3.12"
-dependencies = ["httpx==0.28.1"]
+dependencies = ["httpx==0.28.1", "jev-kb"]
 
 [project.scripts]
 jev-convert = "jev_convert.cli:main"
+
+# 知识库读写的唯一实现在 jev-kb（jev-qa docs/kb-design-v2.md 4.2）；jev-kb 配好 git remote 后改成按 tag 的 git 依赖。
+[tool.uv.sources]
+jev-kb = { path = "../jev-kb", editable = true }
 
 [dependency-groups]
 dev = ["pytest>=8.4,<9", "ruff>=0.14,<1"]
